@@ -3,25 +3,23 @@ const investBtn = document.getElementById('invest-btn');
 const dialog = document.querySelector('dialog');
 const summaryText = document.getElementById('investment-summary');
 const inputAmount = document.getElementById('investment-amount');
-
 let goldPrice = 0;
 
-async function fetchPrice() {
-  try {
-    const res = await fetch('/api/price');
-    const data = await res.json();
+// SSE 
+const eventSource = new EventSource('/api/price')
 
-    goldPrice = data.price; 
+const priceDisplay = document.getElementById('price-display')
 
-    document.getElementById('price-display').textContent = data.price;
-  } catch (err) {
-    document.getElementById('connection-status').textContent = "Disconnected 🔴";
-  }
+eventSource.onmessage = (event)=> {
+  const data = JSON.parse(event.data)
+  const price = data.goldPrice
+
+  priceDisplay.textContent = price
+  goldPrice = price ;
 }
-
-// 🟢 Call once when page loads
-fetchPrice();
-
+ eventSource.onerror = () => {
+  console.log('Connection failed..')
+ }
 
 
 

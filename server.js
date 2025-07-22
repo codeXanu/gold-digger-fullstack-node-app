@@ -12,9 +12,18 @@ const server = http.createServer(async (req, res)=> {
     
 
     if(req.url === '/api/price') {
-        const price = getGoldPrice();
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({price}))
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/event-stream')
+      res.setHeader('Cashe-Control', 'no-cache')
+      res.setHeader('Connection', 'keep-alive')
+
+      setInterval( ()=> {
+        const price = getGoldPrice()
+        res.write(
+            `data: ${JSON.stringify({ event: 'price-updated', goldPrice: price})}\n\n`
+        )
+
+      }, 2000)
         return;
     }
 
