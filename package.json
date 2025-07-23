@@ -4,10 +4,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-   
     "start": "node server.js"
   },
   "author": "Code-X-Anuj",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "pdfkit": "^0.17.1"
+  }
 }

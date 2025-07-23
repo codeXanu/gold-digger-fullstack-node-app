@@ -22,9 +22,10 @@ eventSource.onmessage = (event)=> {
  }
 
 
+let lastDownloadLink = '';
 
 // Open dialog on invest button click
-investBtn.addEventListener('click', (e) => {
+investBtn.addEventListener('click', async (e) => {
     e.preventDefault(); // Prevent form submit
 
     const amount = parseFloat(inputAmount.value);
@@ -41,10 +42,44 @@ investBtn.addEventListener('click', (e) => {
     summaryText.textContent = `You just bought ${grams} Gram Digital Gold for ₹${amount}. You will receive documentation shortly.`;
 
     dialog.showModal();
+
+    const investmentData = {
+        goldPrice,
+        amount,
+        grams
+    };
+    const res = await fetch('/api/invest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(investmentData)
+    });
+
+    if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        lastDownloadLink = url; // Save blob URL for download button
+        // console.log('PDF blob URL:', url);
+    } else {
+        alert('Failed to generate investment PDF.');
+    }
+});
+
+// Download PDF button
+document.getElementById('download-pdf-btn').addEventListener('click', () => {
+    if (lastDownloadLink) {
+        const a = document.createElement('a');
+        a.href = lastDownloadLink;
+        a.download = 'gold-investment-receipt.pdf';
+        a.click();
+    } else {
+        alert("PDF not available yet.");
+    }
 });
 
 // Close dialog on OK button click
-dialog.querySelector('button').addEventListener('click', () => {
+document.getElementById('close-dialog-btn').addEventListener('click', () => {
     dialog.close();
 });
 

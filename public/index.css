@@ -177,7 +177,7 @@ dialog button {
     font-family: 'Roboto', sans;
     border-radius: 10px;
     border: 2px solid var(--dark-gold);
-    margin: 0 auto;
+    margin: 5px auto;
     display: block;
 }
 
